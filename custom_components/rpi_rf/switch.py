@@ -43,6 +43,18 @@ PROTOCOLS = (None,
              Protocol(200, 1, 10, 1, 5, 1, 1),
              Protocol(275, 1, 10, 1, 5, 5, 5))
 
+def kaku_encode(to_encode):
+    encoded = "10000000000"
+
+    print(f"To Encode: {to_encode}")
+
+    for nr in to_encode:
+        bit = ""
+        for x in range(int(nr)):
+            bit += "10"
+        bit += "0000"
+        encoded += bit
+    return str(encoded)
 
 class RFDevice:
     """Representation of a GPIO RF device."""
@@ -139,6 +151,9 @@ class RFDevice:
                     nexacode = nexacode + "10"
             rawcode = nexacode
             self.tx_length = 64
+        if self.tx_proto == 7:
+            rawcode = kaku_encode(code)
+            self.tx_length = len(rawcode)
         _LOGGER.debug("TX code: " + str(code))
         return self.tx_bin(rawcode)
 
