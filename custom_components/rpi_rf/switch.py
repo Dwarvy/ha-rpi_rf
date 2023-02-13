@@ -41,7 +41,7 @@ PROTOCOLS = (None,
              Protocol(380, 1, 6, 1, 3, 3, 1),
              Protocol(500, 6, 14, 1, 2, 2, 1),
              Protocol(200, 1, 10, 1, 5, 1, 1),
-             Protocol(250, 0, 0, 0, 1, 1, 0))
+             Protocol(180, 0, 0, 0, 1, 1, 0))
 
 def kaku_encode(to_encode):
     print(f"To Encode: {to_encode}")
@@ -53,6 +53,7 @@ def kaku_encode(to_encode):
             encoded1 += "2"
         else:
             encoded1 += to_encode[i]
+    encoded1 += to_encode[-1]
     encoded = "1000000000010100000100000"
 
     print(f"To Encode: {encoded1}")
