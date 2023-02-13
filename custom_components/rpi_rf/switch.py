@@ -19,6 +19,7 @@ from homeassistant.core import HomeAssistant
 import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.typing import ConfigType, DiscoveryInfoType
+from rpi_rf import RFDevice
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -61,10 +62,8 @@ def setup_platform(
 ) -> None:
     """Find and return switches controlled by a generic RF device via GPIO."""
 
-    rpi_rf = importlib.import_module("rpi_rf")
-
     gpio = config[CONF_GPIO]
-    rfdevice = rpi_rf.RFDevice(gpio)
+    rfdevice = RFDevice(gpio)
     rfdevice_lock = RLock()
     switches = config[CONF_SWITCHES]
 
