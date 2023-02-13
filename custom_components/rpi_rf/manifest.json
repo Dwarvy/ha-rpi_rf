@@ -4,7 +4,7 @@
     "documentation": "https://github.com/markvader/ha-rpi_rf",
     "issue_tracker": "https://github.com/markvader/ha-rpi_rf/issues",
     "requirements": ["RPi.GPIO==0.7.1", "git+https://github.com/Dwarvy/rpi-rf@6a2b1c4#egg=rpi-rf"],
-    "codeowners": ["@markvader"],
+    "codeowners": ["@dwarvy"],
     "iot_class": "assumed_state",
     "version": "2022.9.0"
   }
