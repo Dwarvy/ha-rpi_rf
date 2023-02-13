@@ -41,7 +41,7 @@ PROTOCOLS = (None,
              Protocol(380, 1, 6, 1, 3, 3, 1),
              Protocol(500, 6, 14, 1, 2, 2, 1),
              Protocol(200, 1, 10, 1, 5, 1, 1),
-             Protocol(275, 0, 0, 0, 0, 1, 0))
+             Protocol(275, 0, 0, 0, 1, 1, 0))
 
 def kaku_encode(to_encode):
     encoded = "10000000000"
@@ -158,20 +158,72 @@ class RFDevice:
     def tx_bin(self, rawcode):
         """Send a binary code."""
         _LOGGER.debug("TX bin: " + str(rawcode))
-        for _ in range(0, self.tx_repeat):
-            if self.tx_proto == 6:
+        if self.tx_proto != 7:
+            for _ in range(0, self.tx_repeat):
+                if self.tx_proto == 6:
+                    if not self.tx_sync():
+                        return False
+                for byte in range(0, self.tx_length):
+                    if rawcode[byte] == '0':
+                        if not self.tx_l0():
+                            return False
+                    else:
+                        if not self.tx_l1():
+                            return False
                 if not self.tx_sync():
                     return False
-            for byte in range(0, self.tx_length):
-                if rawcode[byte] == '0':
-                    if not self.tx_l0():
+        else:
+            for _ in range(0, self.tx_repeat):
+                if self.tx_proto == 6:
+                    if not self.tx_sync():
                         return False
-                else:
-                    if not self.tx_l1():
-                        return False
-            if not self.tx_sync():
-                return False
+                for byte in range(0, self.tx_length):
+                    if rawcode[byte] == '0':
+                        if not self.tx_l0_kaku():
+                            return False
+                    else:
+                        if not self.tx_l1_kaku():
+                            return False
 
+        return True
+
+    def tx_l0_kaku(self):
+        """Send a '0' bit."""
+        if not 0 < self.tx_proto < len(PROTOCOLS):
+            _LOGGER.error("Unknown TX protocol")
+            return False
+        lowpulses = PROTOCOLS[self.tx_proto].zero_low
+        """Send basic waveform."""
+        if not self.tx_enabled:
+            _LOGGER.error("TX is not enabled, not sending data")
+            return False
+        GPIO.output(self.gpio, GPIO.LOW)
+        self._sleep((lowpulses * self.tx_pulselength) / 1000000)
+        return True
+
+    def tx_l1_kaku(self):
+        """Send a '1' bit."""
+        if not 0 < self.tx_proto < len(PROTOCOLS):
+            _LOGGER.error("Unknown TX protocol")
+            return False
+        highpulses = PROTOCOLS[self.tx_proto].one_high
+        """Send basic waveform."""
+        if not self.tx_enabled:
+            _LOGGER.error("TX is not enabled, not sending data")
+            return False
+        GPIO.output(self.gpio, GPIO.HIGH)
+        self._sleep((highpulses * self.tx_pulselength) / 1000000)
+        return True
+
+    def tx_waveform_kaku(self, highpulses, lowpulses):
+        """Send basic waveform."""
+        if not self.tx_enabled:
+            _LOGGER.error("TX is not enabled, not sending data")
+            return False
+        GPIO.output(self.gpio, GPIO.HIGH)
+        self._sleep((highpulses * self.tx_pulselength) / 1000000)
+        GPIO.output(self.gpio, GPIO.LOW)
+        self._sleep((lowpulses * self.tx_pulselength) / 1000000)
         return True
 
     def tx_l0(self):
@@ -197,6 +249,8 @@ class RFDevice:
             return False
         return self.tx_waveform(PROTOCOLS[self.tx_proto].sync_high,
                                 PROTOCOLS[self.tx_proto].sync_low)
+
+
 
     def tx_waveform(self, highpulses, lowpulses):
         """Send basic waveform."""
