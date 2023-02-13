@@ -53,7 +53,7 @@ def kaku_encode(to_encode):
             encoded1 += "2"
         else:
             encoded1 += to_encode[i]
-    encoded = "10000000000"
+    encoded = "1000000000010100000100000"
 
     print(f"To Encode: {encoded1}")
 
@@ -63,6 +63,7 @@ def kaku_encode(to_encode):
             bit += "10"
         bit += "0000"
         encoded += bit
+    encoded += "0000000000"
     return encoded
 
 class RFDevice:
