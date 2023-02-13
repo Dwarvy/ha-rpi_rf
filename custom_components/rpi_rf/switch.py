@@ -44,15 +44,26 @@ PROTOCOLS = (None,
              Protocol(275, 0, 0, 0, 1, 1, 0))
 
 def kaku_encode(to_encode):
+    print(f"To Encode: {to_encode}")
+    to_encode = str(bin(int(to_encode)))[2:]
+    to_encode = to_encode.replace("1", "3").replace("0", "1")
+    encoded1 = ""
+    for i in range(len(to_encode)-1):
+        if to_encode[i] == to_encode[i+1]:
+            encoded1 += "2"
+        else:
+            encoded1 += to_encode[i]
     encoded = "10000000000"
 
-    for nr in str(to_encode):
+    print(f"To Encode: {encoded1}")
+
+    for nr in encoded1:
         bit = ""
         for x in range(int(nr)):
             bit += "10"
         bit += "0000"
         encoded += bit
-    return str(encoded)
+    return encoded
 
 class RFDevice:
     """Representation of a GPIO RF device."""
