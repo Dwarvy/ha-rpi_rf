@@ -46,9 +46,7 @@ PROTOCOLS = (None,
 def kaku_encode(to_encode):
     encoded = "10000000000"
 
-    print(f"To Encode: {to_encode}")
-
-    for nr in to_encode:
+    for nr in str(to_encode):
         bit = ""
         for x in range(int(nr)):
             bit += "10"
