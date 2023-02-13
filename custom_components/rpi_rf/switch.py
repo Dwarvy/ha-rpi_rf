@@ -64,7 +64,7 @@ def kaku_encode(to_encode):
             bit += "10"
         bit += "0000"
         encoded += bit
-    encoded += "00000000000000000000"
+    encoded += "0000000000000000000000000000000000000000"
     return encoded
 
 class RFDevice:
